@@ -2,13 +2,16 @@ package ru.practicum.shareit.item.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.validation.group.CreateGroup;
 
-@Data
+import java.util.List;
+
+@Getter
+@Setter
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemDto {
@@ -27,4 +30,10 @@ public class ItemDto {
     Long ownerId;
 
     Long requestId;
+
+    Booking lastBooking;
+
+    Booking nextBooking;
+
+    List<CommentDto> comments;
 }

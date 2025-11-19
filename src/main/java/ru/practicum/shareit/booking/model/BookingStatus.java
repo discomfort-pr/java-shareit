@@ -1,12 +1,9 @@
 package ru.practicum.shareit.booking.model;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
+public enum BookingStatus {
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookingStatus {
-
-    Long id;
-
-    String status;
+    WAITING,
+    APPROVED,
+    REJECTED,
+    CANCELLED
 }

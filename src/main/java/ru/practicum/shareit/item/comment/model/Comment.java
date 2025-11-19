@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.model;
+package ru.practicum.shareit.item.comment.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,16 +10,19 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "comments")
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "name")
-    String name;
+    @Column(name = "text")
+    String text;
 
-    @Column(name = "email")
-    String email;
+    @Column(name = "item_id")
+    Long itemId;
+
+    @Column(name = "author_id")
+    Long authorId;
 }

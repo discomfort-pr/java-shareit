@@ -8,7 +8,11 @@ import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.exception.ItemNotFoundException;
+import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.item.dto.ShortItemDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.dto.ShortUserDto;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
@@ -21,21 +25,19 @@ public class BookingMapper {
     UserRepository userRepository;
     ItemRepository itemRepository;
 
-    public BookingDtoIn toBookingDtoIn(Booking booking) {
-        return new BookingDtoIn(
-                booking.getItemId(),
-                booking.getStart(),
-                booking.getEnd()
-        );
-    }
-
-    public Booking toEntity(BookingDtoIn bookingData) {
+    public Booking toEntity(BookingDtoIn bookingData, Long userId) {
         return new Booking(
                 null,
                 bookingData.getStart(),
                 bookingData.getEnd(),
-                bookingData.getItemId(),
-                null,
+                itemRepository.findById(bookingData.getItemId())
+                        .orElseThrow(() -> new ItemNotFoundException(
+                                String.format("Item with id %d not found", bookingData.getItemId())
+                        )),
+                userRepository.findById(userId)
+                        .orElseThrow(() -> new UserNotFoundException(
+                                String.format("User with id %d not found", userId)
+                        )),
                 BookingStatus.WAITING
         );
     }
@@ -45,8 +47,8 @@ public class BookingMapper {
                 booking.getId(),
                 booking.getStart(),
                 booking.getEnd(),
-                itemRepository.findById(booking.getItemId()).orElse(null),
-                userRepository.findById(booking.getBookerId()).orElse(null),
+                new ShortItemDto(booking.getItem().getId(), booking.getItem().getName()),
+                new ShortUserDto(booking.getBooker().getId(), booking.getBooker().getName()),
                 booking.getStatus()
         );
     }

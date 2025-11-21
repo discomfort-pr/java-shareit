@@ -3,6 +3,7 @@ package ru.practicum.shareit.request.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -21,8 +22,9 @@ public class ItemRequest {
     @Column(name = "description")
     String description;
 
-    @Column(name = "requestor_id")
-    Long requestorId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requestor_id", nullable = false)
+    User requestor;
 
     @Column(name = "created_date")
     LocalDateTime created;

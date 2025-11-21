@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.shareit.user.model.User;
 
 @Getter
 @Setter
@@ -26,9 +27,7 @@ public class Item {
     @Column(name = "is_available")
     Boolean available;
 
-    @Column(name = "owner_id")
-    Long ownerId;
-
-    @Column(name = "request_id")
-    Long requestId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    User owner;
 }

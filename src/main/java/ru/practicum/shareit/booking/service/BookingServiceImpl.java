@@ -17,8 +17,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,9 +36,9 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new UserNotFoundException(
                         String.format("User with id %d not found", userId)
                 ));
-        Item item = itemRepository.findById(booking.getItemId())
+        Item item = itemRepository.findById(booking.getItem().getId())
                 .orElseThrow(() -> new ItemNotFoundException(
-                        String.format("Item with id %d not found", booking.getItemId())
+                        String.format("Item with id %d not found", booking.getItem().getId())
                 ));
 
         if (!item.getAvailable()) {
@@ -49,7 +47,7 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getStart().equals(booking.getEnd())) {
             throw new InternalValidationException("Start time cannot be equal to end time");
         }
-        booking.setBookerId(userId);
+        booking.getBooker().setId(userId);
 
         return bookingRepository.save(booking);
     }
@@ -60,12 +58,12 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BookingNotFoundException(
                         String.format("Booking with id %d not found", bookingId)
                 ));
-        Item item = itemRepository.findById(booking.getItemId())
+        Item item = itemRepository.findById(booking.getItem().getId())
                 .orElseThrow(() -> new ItemNotFoundException(
-                        String.format("Item with id %d not found", booking.getItemId())
+                        String.format("Item with id %d not found", booking.getItem().getId())
                 ));
 
-        if (!Objects.equals(item.getOwnerId(), userId)) {
+        if (!Objects.equals(item.getOwner().getId(), userId)) {
             throw new InternalValidationException("Item requests can be approved by item owner");
         }
 
@@ -89,12 +87,12 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BookingNotFoundException(
                         String.format("Booking with id %d not found", bookingId)
                 ));
-        Item item = itemRepository.findById(booking.getItemId())
+        Item item = itemRepository.findById(booking.getItem().getId())
                 .orElseThrow(() -> new ItemNotFoundException(
-                        String.format("Item with id %d not found", booking.getItemId())
+                        String.format("Item with id %d not found", booking.getItem().getId())
                 ));
 
-        if (!Objects.equals(userId, item.getOwnerId()) && !Objects.equals(userId, booking.getBookerId())) {
+        if (!Objects.equals(userId, item.getOwner().getId()) && !Objects.equals(userId, booking.getBooker().getId())) {
             throw new InternalValidationException("You must be a booker or item owner to get booking info");
         }
 
@@ -109,32 +107,12 @@ public class BookingServiceImpl implements BookingService {
                 ));
 
         return switch (category) {
-            case ALL -> bookingRepository.findBookingByBookerId(userId).stream()
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
-            case CURRENT -> bookingRepository.findBookingByBookerId(userId).stream()
-                    .filter(
-                            booking -> booking.getStart().isBefore(LocalDateTime.now()) &&
-                                    booking.getEnd().isAfter(LocalDateTime.now())
-                    )
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
-            case PAST -> bookingRepository.findBookingByBookerId(userId).stream()
-                    .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
-            case FUTURE -> bookingRepository.findBookingByBookerId(userId).stream()
-                    .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
-            case WAITING -> bookingRepository.findBookingByBookerId(userId).stream()
-                    .filter(booking -> booking.getStatus().equals(BookingStatus.WAITING))
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
-            case REJECTED -> bookingRepository.findBookingByBookerId(userId).stream()
-                    .filter(booking -> booking.getStatus().equals(BookingStatus.REJECTED))
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
+            case ALL -> bookingRepository.findAllByBookerId(userId);
+            case CURRENT -> bookingRepository.findCurrentByBookerId(userId);
+            case PAST -> bookingRepository.findPastByBookerId(userId);
+            case FUTURE -> bookingRepository.findFutureByBookerId(userId);
+            case WAITING -> bookingRepository.findWaitingByBookerId(userId);
+            case REJECTED -> bookingRepository.findRejectedByBookerId(userId);
         };
     }
 
@@ -150,32 +128,12 @@ public class BookingServiceImpl implements BookingService {
                 .toList();
 
         return switch (category) {
-            case ALL -> bookingRepository.findBookingByItemIdIn(itemsId).stream()
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
-            case CURRENT -> bookingRepository.findBookingByItemIdIn(itemsId).stream()
-                    .filter(
-                            booking -> booking.getStart().isBefore(LocalDateTime.now()) &&
-                                    booking.getEnd().isAfter(LocalDateTime.now())
-                    )
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
-            case PAST -> bookingRepository.findBookingByItemIdIn(itemsId).stream()
-                    .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
-            case FUTURE -> bookingRepository.findBookingByItemIdIn(itemsId).stream()
-                    .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
-            case WAITING -> bookingRepository.findBookingByItemIdIn(itemsId).stream()
-                    .filter(booking -> booking.getStatus().equals(BookingStatus.WAITING))
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
-            case REJECTED -> bookingRepository.findBookingByItemIdIn(itemsId).stream()
-                    .filter(booking -> booking.getStatus().equals(BookingStatus.REJECTED))
-                    .sorted(Comparator.comparing(Booking::getStart))
-                    .toList().reversed();
+            case ALL -> bookingRepository.findAllByItemIdIn(itemsId);
+            case CURRENT -> bookingRepository.findCurrentByItemIdIn(itemsId);
+            case PAST -> bookingRepository.findPastByItemIdIn(itemsId);
+            case FUTURE -> bookingRepository.findFutureByItemIdIn(itemsId);
+            case WAITING -> bookingRepository.findWaitingByItemIdIn(itemsId);
+            case REJECTED -> bookingRepository.findRejectedByItemIdIn(itemsId);
         };
     }
 }

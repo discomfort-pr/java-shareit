@@ -55,7 +55,7 @@ public class ItemController {
     public ItemDto addItem(@RequestBody @Validated(value = CreateGroup.class) ItemDto itemData,
                            @RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
         return itemMapper.toItemDto(
-                itemService.addItem(userId, itemMapper.toEntity(itemData)), null
+                itemService.addItem(userId, itemMapper.toEntity(itemData, userId)), null
         );
     }
 
@@ -64,7 +64,7 @@ public class ItemController {
                               @RequestBody @Validated(value = UpdateGroup.class) ItemDto itemData,
                               @RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
         return itemMapper.toItemDto(
-                itemService.updateItem(userId, itemId, itemMapper.toEntity(itemData)), null
+                itemService.updateItem(userId, itemId, itemMapper.toEntity(itemData, userId)), null
         );
     }
 
@@ -81,7 +81,7 @@ public class ItemController {
                                   @RequestHeader("X-Sharer-User-Id") @Positive Long userId,
                                   @RequestBody CommentDto commentData) {
         return commentMapper.toCommentDto(
-                commentService.postComment(userId, itemId, commentMapper.toEntity(commentData)), userId
+                commentService.postComment(userId, itemId, commentMapper.toEntity(commentData, itemId, userId)), userId
         );
     }
 }

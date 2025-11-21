@@ -64,7 +64,7 @@ public class ItemServiceImpl implements ItemService {
                         String.format("User with id %d not found", ownerId)
                 ));
 
-        itemData.setOwnerId(ownerId);
+        itemData.getOwner().setId(ownerId);
         return itemRepository.save(itemData);
     }
 
@@ -97,7 +97,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void validateItemOwner(Long ownerId, Item validated) {
-        if (!Objects.equals(validated.getOwnerId(), ownerId)) {
+        if (!Objects.equals(validated.getOwner().getId(), ownerId)) {
             throw new InternalValidationException("");
         }
     }
@@ -106,8 +106,5 @@ public class ItemServiceImpl implements ItemService {
         updated.setName(Objects.requireNonNullElse(itemData.getName(), updated.getName()));
         updated.setDescription(Objects.requireNonNullElse(itemData.getDescription(), updated.getDescription()));
         updated.setAvailable(Objects.requireNonNullElse(itemData.getAvailable(), updated.getAvailable()));
-        if (itemData.getRequestId() != null) {
-            updated.setRequestId(itemData.getRequestId());
-        }
     }
 }

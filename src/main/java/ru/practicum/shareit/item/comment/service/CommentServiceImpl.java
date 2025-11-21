@@ -33,15 +33,15 @@ public class CommentServiceImpl implements CommentService {
         if (booking.getStatus() != BookingStatus.APPROVED) {
             throw new InternalValidationException(String.format("Item %d has not been rented", itemId));
         }
-        if (!Objects.equals(booking.getBookerId(), userId)) {
+        if (!Objects.equals(booking.getBooker().getId(), userId)) {
             throw new InternalValidationException("Other users cannot leave comments");
         }
         if (!booking.getEnd().isBefore(LocalDateTime.now())) {
             throw new InternalValidationException("User did not end the rent");
         }
 
-        comment.setAuthorId(userId);
-        comment.setItemId(itemId);
+        comment.getAuthor().setId(userId);
+        comment.getItem().setId(itemId);
 
         return commentRepository.save(comment);
     }

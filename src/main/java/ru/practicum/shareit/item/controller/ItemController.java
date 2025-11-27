@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.comment.dto.CommentDto;
+import ru.practicum.shareit.item.comment.mapper.CommentMapper;
+import ru.practicum.shareit.item.comment.service.CommentService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
@@ -23,25 +26,28 @@ public class ItemController {
 
     ItemService itemService;
     ItemMapper itemMapper;
+    CommentService commentService;
+    CommentMapper commentMapper;
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable @Positive Long itemId) {
+    public ItemDto getItemById(@PathVariable @Positive Long itemId,
+                               @RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
         return itemMapper.toItemDto(
-                itemService.getItemById(itemId)
+                itemService.getItemById(itemId), null
         );
     }
 
     @GetMapping
     public List<ItemDto> getUserItems(@RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
         return itemMapper.toItemDto(
-                itemService.getUserItems(userId)
+                itemService.getUserItems(userId), userId
         );
     }
 
     @GetMapping("/search")
     public List<ItemDto> getItemsMatchingText(@RequestParam(name = "text", defaultValue = "") String text) {
         return itemMapper.toItemDto(
-                itemService.getItemsMatchingText(text)
+                itemService.getItemsMatchingText(text), null
         );
     }
 
@@ -49,7 +55,7 @@ public class ItemController {
     public ItemDto addItem(@RequestBody @Validated(value = CreateGroup.class) ItemDto itemData,
                            @RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
         return itemMapper.toItemDto(
-                itemService.addItem(userId, itemMapper.toEntity(itemData))
+                itemService.addItem(userId, itemMapper.toEntity(itemData, userId)), null
         );
     }
 
@@ -58,7 +64,7 @@ public class ItemController {
                               @RequestBody @Validated(value = UpdateGroup.class) ItemDto itemData,
                               @RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
         return itemMapper.toItemDto(
-                itemService.updateItem(userId, itemId, itemMapper.toEntity(itemData))
+                itemService.updateItem(userId, itemId, itemMapper.toEntity(itemData, userId)), null
         );
     }
 
@@ -66,7 +72,16 @@ public class ItemController {
     public ItemDto deleteItem(@PathVariable @Positive Long itemId,
                               @RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
         return itemMapper.toItemDto(
-                itemService.deleteItem(userId, itemId)
+                itemService.deleteItem(userId, itemId), null
+        );
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto postComment(@PathVariable @Positive Long itemId,
+                                  @RequestHeader("X-Sharer-User-Id") @Positive Long userId,
+                                  @RequestBody CommentDto commentData) {
+        return commentMapper.toCommentDto(
+                commentService.postComment(userId, itemId, commentMapper.toEntity(commentData, itemId, userId)), userId
         );
     }
 }

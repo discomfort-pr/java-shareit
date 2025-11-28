@@ -9,10 +9,13 @@ import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.RequestNotFoundException;
 import ru.practicum.shareit.item.comment.mapper.CommentMapper;
 import ru.practicum.shareit.item.comment.repository.CommentRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -33,6 +36,7 @@ public class ItemMapper {
     BookingMapper bookingMapper;
 
     UserRepository userRepository;
+    ItemRequestRepository itemRequestRepository;
 
     public ItemDto toItemDto(Item item, Long userId) {
         List<Booking> lastBookingCandidates = bookingRepository.findByEndBefore(LocalDateTime.now())
@@ -57,6 +61,7 @@ public class ItemMapper {
                 item.getDescription(),
                 item.getAvailable(),
                 item.getOwner().getId(),
+                (item.getRequest() != null) ? item.getRequest().getId() : null,
                 (Objects.equals(item.getOwner().getId(), userId)) ? lastBookingDto : null,
                 (Objects.equals(item.getOwner().getId(), userId)) ? nextBookingDto : null,
                 commentMapper.toCommentDto(commentRepository.findByItemId(item.getId()))
@@ -74,12 +79,21 @@ public class ItemMapper {
                 .orElseThrow(() -> new UserNotFoundException(
                         String.format("User with id %d not found", itemData.getOwnerId())
                 ));
+        ItemRequest request = null;
+        if (itemData.getRequestId() != null) {
+            request = itemRequestRepository.findById(itemData.getRequestId())
+                    .orElseThrow(() -> new RequestNotFoundException(
+                            String.format("Request with id %d not found", itemData.getRequestId())
+                    ));
+        }
+
         return new Item(
                 itemData.getId(),
                 itemData.getName(),
                 itemData.getDescription(),
                 itemData.getAvailable(),
-                user
+                user,
+                request
         );
     }
 }

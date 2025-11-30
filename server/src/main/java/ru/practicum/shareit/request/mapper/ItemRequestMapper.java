@@ -53,7 +53,7 @@ public class ItemRequestMapper {
         );
     }
 
-    public List<ItemRequestDto> toItemRequestDto(List<ItemRequest> itemRequests) {
+    public List<ItemRequestDto> toItemRequestDtoList(List<ItemRequest> itemRequests) {
         return itemRequests.stream()
                 .map(this::toItemRequestDto)
                 .toList();

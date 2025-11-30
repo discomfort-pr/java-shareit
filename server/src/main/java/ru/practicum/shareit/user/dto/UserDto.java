@@ -9,6 +9,7 @@ import ru.practicum.shareit.validation.group.UpdateGroup;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDto {
 

@@ -29,14 +29,14 @@ public class ItemRequestController {
 
     @GetMapping
     public List<ItemRequestDto> getUserItemRequests(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemRequestMapper.toItemRequestDto(
+        return itemRequestMapper.toItemRequestDtoList(
                 itemRequestService.getUserItemRequests(userId)
         );
     }
 
     @GetMapping("/all")
     public List<ItemRequestDto> getAllRequests(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
-        return itemRequestMapper.toItemRequestDto(
+        return itemRequestMapper.toItemRequestDtoList(
                 itemRequestService.getAllRequests()
         );
     }

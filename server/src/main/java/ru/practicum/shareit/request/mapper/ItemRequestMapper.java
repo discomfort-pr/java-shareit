@@ -40,7 +40,7 @@ public class ItemRequestMapper {
     }
 
     public ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
-        List<ItemDto> items = itemMapper.toItemDto(
+        List<ItemDto> items = itemMapper.toItemDtoList(
                 itemRepository.findByRequest_Id(itemRequest.getId()), itemRequest.getRequestor().getId()
         );
 

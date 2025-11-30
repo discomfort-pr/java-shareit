@@ -35,7 +35,7 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getUserItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemMapper.toItemDto(
+        return itemMapper.toItemDtoList(
                 itemService.getUserItems(userId), userId
         );
     }
@@ -43,7 +43,7 @@ public class ItemController {
     @GetMapping("/search")
     public List<ItemDto> getItemsMatchingText(@RequestParam(name = "text", defaultValue = "") String text,
                                               @RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
-        return itemMapper.toItemDto(
+        return itemMapper.toItemDtoList(
                 itemService.getItemsMatchingText(text), userId
         );
     }

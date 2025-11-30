@@ -68,7 +68,7 @@ public class ItemMapper {
         );
     }
 
-    public List<ItemDto> toItemDto(List<Item> items, Long userId) {
+    public List<ItemDto> toItemDtoList(List<Item> items, Long userId) {
         return items.stream()
                 .map(item -> toItemDto(item, userId))
                 .toList();

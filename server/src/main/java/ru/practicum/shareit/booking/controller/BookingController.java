@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.controller;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
@@ -17,7 +16,6 @@ import java.util.List;
 @RequestMapping("/bookings")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Validated
 public class BookingController {
 
     BookingService bookingService;

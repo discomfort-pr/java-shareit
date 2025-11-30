@@ -3,7 +3,6 @@ package ru.practicum.shareit.request.controller;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
@@ -15,7 +14,6 @@ import java.util.List;
 @RequestMapping("/requests")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Validated
 public class ItemRequestController {
 
     ItemRequestService itemRequestService;

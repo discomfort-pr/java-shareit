@@ -9,6 +9,7 @@ import ru.practicum.shareit.exception.RequestNotFoundException;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Transactional
@@ -26,12 +27,18 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequest> getUserItemRequests(Long userId) {
-        return itemRequestRepository.findByRequestor_Id(userId);
+        return itemRequestRepository.findByRequestor_Id(userId).stream()
+                .sorted(Comparator.comparing(ItemRequest::getCreated))
+                .toList()
+                .reversed();
     }
 
     @Override
     public List<ItemRequest> getAllRequests() {
-        return itemRequestRepository.findAll();
+        return itemRequestRepository.findAll().stream()
+                .sorted(Comparator.comparing(ItemRequest::getCreated))
+                .toList()
+                .reversed();
     }
 
     @Override

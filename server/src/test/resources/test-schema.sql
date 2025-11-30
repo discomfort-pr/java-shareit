@@ -1,19 +1,23 @@
-DROP TABLE IF EXISTS users, items, bookings, requests, comments;
+DROP TABLE IF EXISTS bookings CASCADE;
+DROP TABLE IF EXISTS items CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS requests CASCADE;
+DROP TABLE IF EXISTS comments CASCADE;
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE
 );
 
-CREATE TABLE requests (
+CREATE TABLE IF NOT EXISTS requests (
     id BIGSERIAL PRIMARY KEY,
     description VARCHAR(255),
     requestor_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
     created_date TIMESTAMP
 );
 
-CREATE TABLE items (
+CREATE TABLE IF NOT EXISTS items (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255),
     description VARCHAR(255),
@@ -22,7 +26,7 @@ CREATE TABLE items (
     request_id BIGINT REFERENCES requests(id) ON DELETE CASCADE
 );
 
-CREATE TABLE bookings (
+CREATE TABLE IF NOT EXISTS bookings (
     id BIGSERIAL PRIMARY KEY,
     start_date TIMESTAMP,
     end_date TIMESTAMP,
@@ -31,7 +35,7 @@ CREATE TABLE bookings (
     status VARCHAR(255)
 );
 
-CREATE TABLE comments (
+CREATE TABLE IF NOT EXISTS comments (
     id BIGSERIAL PRIMARY KEY,
     text VARCHAR(255),
     item_id BIGINT REFERENCES items(id) ON DELETE CASCADE,

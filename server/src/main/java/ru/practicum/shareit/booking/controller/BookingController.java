@@ -41,12 +41,12 @@ public class BookingController {
     @GetMapping
     public List<BookingDtoOut> getUserBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
                                               @RequestParam(name = "category", defaultValue = "ALL") String category) {
-        return bookingMapper.toBookingDtoOut(bookingService.getUserBookings(userId, BookingCategory.valueOf(category)));
+        return bookingMapper.toBookingDtoOutList(bookingService.getUserBookings(userId, BookingCategory.valueOf(category)));
     }
 
     @GetMapping("/owner")
     public List<BookingDtoOut> getUserItemsBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                    @RequestParam(name = "category", defaultValue = "ALL") String category) {
-        return bookingMapper.toBookingDtoOut(bookingService.getUserItemsBookings(userId, BookingCategory.valueOf(category)));
+        return bookingMapper.toBookingDtoOutList(bookingService.getUserItemsBookings(userId, BookingCategory.valueOf(category)));
     }
 }

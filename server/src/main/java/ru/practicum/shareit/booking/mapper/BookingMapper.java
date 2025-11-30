@@ -53,7 +53,7 @@ public class BookingMapper {
         );
     }
 
-    public List<BookingDtoOut> toBookingDtoOut(List<Booking> bookings) {
+    public List<BookingDtoOut> toBookingDtoOutList(List<Booking> bookings) {
         return bookings.stream()
                 .map(this::toBookingDtoOut)
                 .toList();
